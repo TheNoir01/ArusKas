@@ -1,0 +1,38 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Setting</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="card">
+    <div class="section-title">Tema</div>
+    <ion-item>
+      <ion-select label="Mode Theme" labelPlacement="stacked" [(ngModel)]="themeMode">
+        <ion-select-option value="system">System</ion-select-option>
+        <ion-select-option value="light">Light</ion-select-option>
+        <ion-select-option value="dark">Dark</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Ukuran Font</div>
+    <ion-item>
+      <ion-range
+        min="0.9"
+        max="1.3"
+        step="0.05"
+        snaps="true"
+        pin="true"
+        [(ngModel)]="fontScale"
+      ></ion-range>
+    </ion-item>
+    <ion-note class="range-note">Skala saat ini: {{ fontScale | number:'1.2-2' }}x</ion-note>
+  </div>
+
+  <ion-button expand="block" color="primary" (click)="saveSettings()">Simpan Setting</ion-button>
+</ion-content>

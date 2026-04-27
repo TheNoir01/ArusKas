@@ -1,0 +1,402 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <div class="app-brand" slot="start">
+      <ion-img src="assets/icon/AKicon.png" alt="ArusKas Logo" class="logo"></ion-img>
+      <span class="brand-text">ArusKas</span>
+    </div>
+    <ion-buttons slot="end">
+      <ion-button id="top-menu-trigger" aria-label="Open menu">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-popover trigger="top-menu-trigger" dismissOnSelect="true" side="bottom" alignment="end">
+  <ng-template>
+    <ion-list>
+      <ion-item button detail="true" routerLink="/profile">
+        <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+        <ion-label>Profile</ion-label>
+      </ion-item>
+      <ion-item button detail="true" routerLink="/settings">
+        <ion-icon name="settings-outline" slot="start"></ion-icon>
+        <ion-label>Setting</ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>
+
+<ion-tabs #tabs>
+  <ion-tab tab="home">
+    <div id="home-page" class="ion-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Home</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+
+          <!-- BALANCE CARD -->
+          <div class="card">
+            <div class="section-title">Total Balance</div>
+            <div class="balance">Rp {{ totalBalance | number:'1.0-0' }}</div>
+
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                  <div class="income">+ Rp {{ totalIncome | number:'1.0-0' }}</div>
+                  <small>Income</small>
+                </ion-col>
+                <ion-col>
+                  <div class="outflow">- Rp {{ totalOutflow | number:'1.0-0' }}</div>
+                  <small>Expense</small>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+
+          
+          <div class="card pie-card">
+            <div class="section-title">Perbandingan Income vs Expense Bulanan</div>
+            <div class="comparison-layout" *ngIf="monthlyIncomeExpenseComparison.length > 0; else emptyMonthlyComparisonChart">
+              <div class="comparison-legend">
+                <div class="legend-item">
+                  <span class="dot income-dot"></span>
+                  <span>Income</span>
+                </div>
+                <div class="legend-item">
+                  <span class="dot expense-dot"></span>
+                  <span>Expense</span>
+                </div>
+              </div>
+
+              <div class="comparison-list">
+                <div class="month-row" *ngFor="let item of monthlyIncomeExpenseComparison; trackBy: trackByMonth">
+                  <div class="month-label">{{ item.label }}</div>
+
+                  <div class="bar-row">
+                    <span class="bar-tag">In</span>
+                    <div class="bar-track">
+                      <div class="bar-fill income-fill" [style.width.%]="(item.income / monthlyComparisonMax) * 100"></div>
+                    </div>
+                    <span class="bar-value">Rp {{ item.income | number:'1.0-0' }}</span>
+                  </div>
+
+                  <div class="bar-row">
+                    <span class="bar-tag">Ex</span>
+                    <div class="bar-track">
+                      <div class="bar-fill expense-fill" [style.width.%]="(item.expense / monthlyComparisonMax) * 100"></div>
+                    </div>
+                    <span class="bar-value">Rp {{ item.expense | number:'1.0-0' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-template #emptyMonthlyComparisonChart>
+              <ion-text color="medium">Belum ada data transaksi untuk dibandingkan per bulan.</ion-text>
+            </ng-template>
+          </div>
+
+          <div class="card export-card">
+            <div class="section-title">Export Laporan Bulanan</div>
+            <ion-item class="month-picker-item" lines="none">
+              <ion-icon name="calendar-outline" slot="start" class="month-picker-icon"></ion-icon>
+              <ion-input
+                class="month-picker-input"
+                type="month"
+                label="Periode Laporan"
+                labelPlacement="stacked"
+                [(ngModel)]="selectedReportMonth"
+              ></ion-input>
+            </ion-item>
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                  <ion-button
+                    expand="block"
+                    color="primary"
+                    (click)="exportReportPdf()"
+                    [disabled]="monthlyReportRows.length === 0"
+                  >
+                    Download PDF
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+            <ion-text color="medium" *ngIf="monthlyReportRows.length === 0">
+              Tidak ada transaksi pada periode ini.
+            </ion-text>
+          </div>
+
+          <!-- RECENT TRANSACTION -->
+          <div class="section-title">Recent Transaction</div>
+
+          <ion-list *ngIf="recentTransactions.length > 0">
+            <ion-item *ngFor="let transaction of recentTransactions; trackBy: trackByTransaction">
+              <ion-label>
+                <h2>{{ transaction.name }}</h2>
+                <p>{{ transaction.date }} • {{ transaction.category }}</p>
+              </ion-label>
+              <ion-note
+                slot="end"
+                [class.income]="transaction.type === 'income'"
+                [class.outflow]="transaction.type === 'outflow'"
+              >
+                {{ transaction.type === 'income' ? '+' : '-' }}Rp {{ transaction.amount | number:'1.0-0' }}
+              </ion-note>
+            </ion-item>
+          </ion-list>
+
+          <ion-text color="medium" *ngIf="recentTransactions.length === 0">
+            Belum ada transaksi tersimpan.
+          </ion-text>
+
+      </ion-content>
+    </div>
+  </ion-tab>
+  
+  <!--bagian untuk menampilkan halaman income-->
+  <ion-tab tab="income">
+    <div id="income-page" class="ion-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Income</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+
+          <!-- HEADER SUMMARY -->
+          <div class="card">
+            <div class="section-title">Total Income</div>
+            <div class="balance income">Rp {{ totalIncome | number:'1.0-0' }}</div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">Gaji Pokok Bulanan</div>
+            <ion-item>
+              <ion-toggle
+                justify="space-between"
+                [checked]="noFixedSalary"
+                (ionChange)="toggleNoFixedSalary($event.detail.checked)"
+              >
+                Tidak memiliki gaji tetap
+              </ion-toggle>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                type="number"
+                label="Nominal Gaji Pokok"
+                labelPlacement="stacked"
+                placeholder="Contoh: 5000000"
+                [(ngModel)]="baseSalaryInput"
+                [disabled]="noFixedSalary"
+              ></ion-input>
+            </ion-item>
+            <ion-button expand="block" color="primary" (click)="saveBaseSalary()" [disabled]="noFixedSalary">
+              {{ hasBaseSalary ? 'Update Gaji Pokok' : 'Simpan Gaji Pokok' }}
+            </ion-button>
+            <ion-text color="medium" *ngIf="hasBaseSalary">
+              Gaji pokok aktif: Rp {{ currentBaseSalary | number:'1.0-0' }}. Sistem akan menambahkan otomatis setiap awal bulan.
+            </ion-text>
+            <ion-text color="medium" *ngIf="noFixedSalary">
+              Mode tanpa gaji tetap aktif. Kamu tetap bisa mencatat income secara manual.
+            </ion-text>
+            <ion-text color="warning" *ngIf="!hasBaseSalary">
+              Isi gaji pokok terlebih dahulu agar income bulanan otomatis berjalan.
+            </ion-text>
+          </div>
+
+          <ng-container *ngIf="canUseIncomeForm; else setupSalaryFirst">
+
+          <div class="card">
+            <div class="section-title">Tambah Income</div>
+            <ion-item>
+              <ion-input
+                label="Nama"
+                labelPlacement="stacked"
+                placeholder="Contoh: Gaji Bulanan"
+                [(ngModel)]="incomeForm.name"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                type="number"
+                label="Jumlah"
+                labelPlacement="stacked"
+                placeholder="Contoh: 5000000"
+                [(ngModel)]="incomeForm.amount"
+              ></ion-input>
+            </ion-item>
+            <ion-item class="category-item">
+              <ion-select
+                class="category-select"
+                label="Kategori"
+                labelPlacement="stacked"
+                placeholder="Pilih kategori income"
+                interface="popover"
+                [(ngModel)]="incomeForm.category"
+              >
+                <ion-select-option *ngFor="let category of incomeCategoryOptions" [value]="category">
+                  {{ category }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-note class="category-hint">Ketuk kolom atau panah kanan untuk memilih kategori.</ion-note>
+            <ion-button expand="block" color="primary" (click)="addIncome()">Simpan Income</ion-button>
+          </div>
+
+          <ion-item class="month-picker-item" lines="none">
+            <ion-icon name="calendar-outline" slot="start" class="month-picker-icon"></ion-icon>
+            <ion-input
+              class="month-picker-input"
+              type="month"
+              label="Bulan History Income"
+              labelPlacement="stacked"
+              [(ngModel)]="selectedIncomeHistoryMonth"
+              (ngModelChange)="onIncomeMonthChange($event)"
+            ></ion-input>
+          </ion-item>
+
+          <!-- LIST INCOME -->
+          <ion-list>
+            <ion-item *ngFor="let transaction of incomeTransactions; trackBy: trackByTransaction">
+              <ion-icon name="wallet" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <h2>{{ transaction.name }}</h2>
+                <p>{{ transaction.date }} • {{ transaction.category }}</p>
+              </ion-label>
+              <ion-note slot="end" class="income">+Rp {{ transaction.amount | number:'1.0-0' }}</ion-note>
+            </ion-item>
+          </ion-list>
+
+          <ion-text color="medium" *ngIf="incomeTransactionsTotalCount === 0">
+            Belum ada history income pada bulan ini.
+          </ion-text>
+
+          <ion-button
+            expand="block"
+            fill="outline"
+            color="primary"
+            (click)="loadMoreIncomeHistory()"
+            *ngIf="canLoadMoreIncomeHistory"
+          >
+            Muat Lebih Banyak
+          </ion-button>
+
+          </ng-container>
+
+          <ng-template #setupSalaryFirst>
+            <ion-text color="medium">Form income akan aktif setelah gaji pokok disimpan atau aktifkan opsi tanpa gaji tetap.</ion-text>
+          </ng-template>
+      </ion-content>
+    </div>
+  </ion-tab>
+
+  <!--bagian untuk menampilkan halaman outflow-->
+  <ion-tab tab="outflow">
+    <div id="outflow-page" class="ion-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Outflow</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <div class="card">
+            <div class="section-title">Total Outflow</div>
+            <div class="balance outflow">Rp {{ totalOutflow | number:'1.0-0' }}</div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">Tambah Expense</div>
+            <ion-item>
+              <ion-input
+                label="Nama"
+                labelPlacement="stacked"
+                placeholder="Contoh: Makan Siang"
+                [(ngModel)]="outflowForm.name"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                type="number"
+                label="Jumlah"
+                labelPlacement="stacked"
+                placeholder="Contoh: 75000"
+                [(ngModel)]="outflowForm.amount"
+              ></ion-input>
+            </ion-item>
+            <ion-item class="category-item">
+              <ion-select
+                class="category-select"
+                label="Kategori"
+                labelPlacement="stacked"
+                placeholder="Pilih kategori outflow"
+                interface="popover"
+                [(ngModel)]="outflowForm.category"
+              >
+                <ion-select-option *ngFor="let category of outflowCategoryOptions" [value]="category">
+                  {{ category }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-note class="category-hint">Ketuk kolom atau panah kanan untuk memilih kategori.</ion-note>
+            <ion-button expand="block" color="primary" (click)="addOutflow()">Simpan Expense</ion-button>
+          </div>
+
+          <ion-item class="month-picker-item" lines="none">
+            <ion-icon name="calendar-outline" slot="start" class="month-picker-icon"></ion-icon>
+            <ion-input
+              class="month-picker-input"
+              type="month"
+              label="Bulan History Pengeluaran"
+              labelPlacement="stacked"
+              [(ngModel)]="selectedOutflowHistoryMonth"
+              (ngModelChange)="onOutflowMonthChange($event)"
+            ></ion-input>
+          </ion-item>
+
+          <ion-list>
+            <ion-item *ngFor="let transaction of outflowTransactions; trackBy: trackByTransaction">
+              <ion-icon name="restaurant" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <h2>{{ transaction.name }}</h2>
+                <p>{{ transaction.date }} • {{ transaction.category }}</p>
+              </ion-label>
+              <ion-note slot="end" class="outflow">-Rp {{ transaction.amount | number:'1.0-0' }}</ion-note>
+            </ion-item>
+          </ion-list>
+
+          <ion-text color="medium" *ngIf="outflowTransactionsTotalCount === 0">
+            Belum ada history pengeluaran pada bulan ini.
+          </ion-text>
+
+          <ion-button
+            expand="block"
+            fill="outline"
+            color="primary"
+            (click)="loadMoreOutflowHistory()"
+            *ngIf="canLoadMoreOutflowHistory"
+          >
+            Muat Lebih Banyak
+          </ion-button>
+
+      </ion-content>
+    </div>
+  </ion-tab>
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="income">
+      <ion-icon name="cash"></ion-icon>
+      <ion-label>Income</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="outflow">
+      <ion-icon name="arrow-down"></ion-icon>
+      <ion-label>Outflow</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

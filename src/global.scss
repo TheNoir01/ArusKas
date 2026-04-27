@@ -1,0 +1,182 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+@import "@ionic/angular/css/palettes/dark.class.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+:root {
+	--app-font-scale: 1;
+	--app-page-padding: clamp(0.75rem, 3.5vw, 1rem);
+	--app-card-padding: clamp(0.875rem, 4vw, 1rem);
+	--app-card-radius: clamp(0.875rem, 3.2vw, 1rem);
+	--app-section-title-size: clamp(0.75rem, 2.4vw, 0.8125rem);
+	--app-control-radius: clamp(0.75rem, 2.8vw, 0.875rem);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body,
+ion-app {
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	overflow-x: hidden;
+}
+
+html {
+	font-size: calc(16px * var(--app-font-scale));
+}
+
+ion-content {
+	--padding-start: var(--app-page-padding);
+	--padding-end: var(--app-page-padding);
+	--padding-top: var(--app-page-padding);
+	--padding-bottom: calc(var(--app-page-padding) + env(safe-area-inset-bottom, 0px));
+}
+
+ion-toolbar {
+	--min-height: 52px;
+}
+
+.card {
+	background: var(--ion-card-background, var(--ion-item-background, var(--ion-background-color)));
+	border-radius: var(--app-card-radius);
+	padding: var(--app-card-padding);
+	border: 1px solid rgba(var(--ion-color-primary-rgb), 0.12);
+}
+
+.section-title {
+	font-size: var(--app-section-title-size);
+	font-weight: 600;
+	color: var(--ion-color-medium);
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	margin-bottom: 8px;
+}
+
+ion-item {
+	--background: rgba(var(--ion-color-primary-rgb), 0.04);
+	--border-color: rgba(var(--ion-color-primary-rgb), 0.14);
+	--border-style: solid;
+	--border-width: 1px;
+	--border-radius: var(--app-control-radius);
+	--highlight-color-focused: rgba(var(--ion-color-primary-rgb), 0.45);
+	--highlight-color-valid: rgba(var(--ion-color-primary-rgb), 0.35);
+	--highlight-color-invalid: rgba(var(--ion-color-primary-rgb), 0.35);
+	margin-bottom: 10px;
+}
+
+ion-button {
+	--border-radius: var(--app-control-radius);
+	--background: var(--ion-color-primary);
+	--background-hover: var(--ion-color-primary-shade);
+	--color: var(--ion-color-primary-contrast);
+	font-weight: 600;
+}
+
+ion-text {
+	display: block;
+	margin-top: 6px;
+}
+
+ion-input,
+ion-select {
+	--color: var(--ion-color-primary-shade);
+	--placeholder-color: rgba(var(--ion-color-primary-rgb), 0.55);
+	--highlight-color-focused: var(--ion-color-primary);
+	--highlight-color-valid: var(--ion-color-primary);
+	--highlight-color-invalid: var(--ion-color-primary-shade);
+}
+
+ion-input::part(label),
+ion-select::part(label) {
+	color: var(--ion-color-primary-shade);
+}
+
+ion-item.item-has-focus ion-input::part(label),
+ion-item.item-has-focus ion-select::part(label) {
+	color: var(--ion-color-primary);
+}
+
+ion-list {
+	background: transparent;
+}
+
+body.ion-palette-dark,
+html.ion-palette-dark {
+	.card {
+		border-color: rgba(var(--ion-color-primary-rgb), 0.24);
+	}
+
+	ion-item {
+		--background: rgba(var(--ion-color-primary-rgb), 0.1);
+		--border-color: rgba(var(--ion-color-primary-rgb), 0.3);
+		--color: rgba(255, 255, 255, 0.92);
+	}
+
+	ion-input,
+	ion-select {
+		--color: rgba(236, 240, 241, 0.94);
+		--placeholder-color: rgba(208, 214, 217, 0.8);
+	}
+
+	ion-input::part(label),
+	ion-select::part(label) {
+		color: rgba(216, 222, 225, 0.92);
+	}
+
+	ion-item.item-has-focus ion-input::part(label),
+	ion-item.item-has-focus ion-select::part(label) {
+		color: rgba(236, 240, 241, 0.96);
+	}
+
+	ion-segment-button {
+		--indicator-color: var(--ion-color-primary);
+		--color-checked: var(--ion-color-primary-contrast);
+		--color: rgba(255, 255, 255, 0.84);
+	}
+
+	ion-note,
+	ion-label h2,
+	ion-label p,
+	small {
+		color: rgba(236, 240, 241, 0.94);
+	}
+}
