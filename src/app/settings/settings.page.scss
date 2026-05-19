@@ -6,6 +6,11 @@
   margin-bottom: var(--app-page-padding);
 }
 
+ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
 .section-title {
   font-size: var(--app-section-title-size);
   font-weight: 600;
@@ -36,4 +41,20 @@ ion-button {
   --background-hover: var(--ion-color-primary-shade);
   --color: var(--ion-color-primary-contrast);
   font-weight: 600;
+}
+
+.danger-card {
+  border-color: rgba(var(--ion-color-danger-rgb), 0.22);
+}
+
+.danger-note {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--ion-color-medium);
+}
+
+.reset-button {
+  --background: var(--ion-color-danger);
+  --background-hover: var(--ion-color-danger-shade);
+  --color: var(--ion-color-danger-contrast);
 }

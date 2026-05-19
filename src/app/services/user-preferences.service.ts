@@ -55,6 +55,21 @@ export class UserPreferencesService {
     this.applySettings();
   }
 
+  resetPreferences(): void {
+    this.profile = {
+      fullName: ''
+    };
+
+    this.settings = {
+      themeMode: 'system',
+      fontScale: 1
+    };
+
+    localStorage.removeItem(this.profileKey);
+    localStorage.removeItem(this.settingsKey);
+    this.applySettings();
+  }
+
   applySettings(): void {
     this.applyThemeMode(this.settings.themeMode);
     this.applyFontScale(this.settings.fontScale);

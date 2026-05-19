@@ -35,4 +35,17 @@
   </div>
 
   <ion-button expand="block" color="primary" (click)="saveSettings()">Simpan Setting</ion-button>
+
+  <div class="card danger-card">
+    <div class="section-title">Reset</div>
+    <ion-note class="danger-note">Reset akan menghapus seluruh data aplikasi (transaksi, profil, dan setting).</ion-note>
+    <ion-button
+      expand="block"
+      color="danger"
+      class="reset-button"
+      (click)="confirmResetAppData()"
+    >
+      Reset Aplikasi
+    </ion-button>
+  </div>
 </ion-content>

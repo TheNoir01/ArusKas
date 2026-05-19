@@ -28,21 +28,12 @@ export class FinanceService {
     this.save();
   }
 
-  deleteTransaction(id: number) {
-    this.transactions = this.transactions.filter(t => t.id !== id);
-    this.save();
+  getIncome() {
+    return this.transactions.filter(t => t.type === 'income');
   }
 
-  getIncome(type?: string) {
-    return this.transactions.filter(t =>
-      t.type === 'income' && (!type || t.subType === type)
-    );
-  }
-
-  getOutflow(type?: string) {
-    return this.transactions.filter(t =>
-      t.type === 'outflow' && (!type || t.subType === type)
-    );
+  getOutflow() {
+    return this.transactions.filter(t => t.type === 'outflow');
   }
 
   getTotalIncome() {
@@ -64,6 +55,16 @@ export class FinanceService {
   setBaseSalary(amount: number) {
     this.baseSalary = amount;
     localStorage.setItem(this.baseSalaryKey, String(amount));
+  }
+
+  resetAllData() {
+    this.transactions = [];
+    this.baseSalary = null;
+    this.lastAutoSalaryMonth = '';
+
+    localStorage.removeItem(this.storageKey);
+    localStorage.removeItem(this.baseSalaryKey);
+    localStorage.removeItem(this.autoSalaryMonthKey);
   }
 
   ensureMonthlyBaseSalary(date = new Date()) {

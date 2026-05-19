@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import { ViewWillEnter, ViewDidEnter, ViewWillLeave, ViewDidLeave } from '@ionic/angular';
 import { FinanceService } from '../services/finance';
 import { Transaction } from '../models/transaction.model';
 import { UserPreferencesService } from '../services/user-preferences.service';
@@ -28,7 +29,7 @@ interface ReportRow {
   standalone: false,
   
 })
-export class HomePage {
+export class HomePage implements ViewWillEnter, ViewDidEnter, ViewWillLeave, ViewDidLeave {
   incomeType = 'tetap';
   outflowType = 'primer';
   selectedReportMonth = this.getCurrentMonthKey();
@@ -66,11 +67,26 @@ export class HomePage {
   constructor(
     public finance: FinanceService,
     private readonly preferences: UserPreferencesService
-  ) {
+  ) { }
+
+  ionViewWillEnter(): void {
+    console.log('HomePage: ionViewWillEnter');
     const savedBaseSalary = this.finance.getBaseSalary();
     this.baseSalaryInput = savedBaseSalary;
     this.noFixedSalary = localStorage.getItem(this.noFixedSalaryKey) === 'true';
     this.finance.ensureMonthlyBaseSalary();
+  }
+
+  ionViewDidEnter(): void {
+    console.log('HomePage: ionViewDidEnter');
+  }
+
+  ionViewWillLeave(): void {
+    console.log('HomePage: ionViewWillLeave');
+  }
+
+  ionViewDidLeave(): void {
+    console.log('HomePage: ionViewDidLeave');
   }
 
   get profileName(): string {
